@@ -15,7 +15,12 @@ const orderedModules = getCourseModulesInOrder(stages, modules).map((module) => 
   data-continue-learning-link
   data-course-modules={JSON.stringify(orderedModules)}
 >
-  继续学习
+  <span class="continue-learning-link__copy">
+    <span class="continue-learning-link__eyebrow">Continue Learning</span>
+    <span class="continue-learning-link__title">从当前学习进度继续</span>
+    <span class="continue-learning-link__hint">自动跳转到首个未完成模块</span>
+  </span>
+  <span class="continue-learning-link__icon" aria-hidden="true">↗</span>
 </a>
 
 <script>
@@ -26,15 +31,78 @@ const orderedModules = getCourseModulesInOrder(stages, modules).map((module) => 
 
 <style>
   .continue-learning-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100%, 34rem);
+    min-height: 4.25rem;
+    padding: 0.95rem 1rem 0.95rem 1.1rem;
+    margin: 0 0 1.5rem;
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: calc(var(--radius-md) + 2px);
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(255, 255, 255, 0.96) 58%),
+      rgba(255, 255, 255, 0.88);
+    box-shadow:
+      0 20px 46px rgba(16, 34, 39, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 0.58);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .continue-learning-link:hover {
+    transform: translateY(-2px);
+    border-color: rgba(15, 118, 110, 0.28);
+    box-shadow:
+      0 24px 56px rgba(16, 34, 39, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  }
+
+  .continue-learning-link__copy {
+    display: grid;
+    gap: 0.18rem;
+  }
+
+  .continue-learning-link__eyebrow,
+  .continue-learning-link__title,
+  .continue-learning-link__hint {
+    margin: 0;
+  }
+
+  .continue-learning-link__eyebrow {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .continue-learning-link__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .continue-learning-link__hint {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .continue-learning-link__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.8rem;
-    padding: 0.7rem 1rem;
-    margin: 0 0 1.5rem;
+    width: 2.7rem;
+    height: 2.7rem;
+    flex-shrink: 0;
     border-radius: 999px;
-    background: var(--accent);
-    color: white;
+    background: rgba(15, 118, 110, 0.12);
+    color: var(--accent-strong);
+    font-size: 1.15rem;
     font-weight: 700;
   }
 </style>

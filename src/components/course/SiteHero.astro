@@ -1,15 +1,50 @@
+---
+import { modules } from '../../data/course/modules';
+import { stages } from '../../data/course/stages';
+
+const metrics = [
+  { value: `${stages.length}`, label: '学习阶段' },
+  { value: `${modules.length}`, label: '模块总数' },
+  { value: 'Local', label: '本地进度记录' }
+];
+
+const focusAreas = ['模型与 Prompt 基础', 'RAG 检索与评估', 'Agent 编排与生产系统'];
+---
+
 <section class="site-hero">
-  <div class="site-hero__content">
-    <p class="site-hero__eyebrow">RAG 与 Agent 学习网站</p>
-    <h1 class="site-hero__title">AI 架构师训练路线</h1>
-    <p class="site-hero__lede">
-      从基础认知、检索增强到 Agent 编排与生产级系统，围绕真实项目建立完整的
-      AI 系统设计与落地能力。
-    </p>
-    <p class="site-hero__body">
-      这不是只背概念的知识清单，而是一条“理论 + 实战”并行的学习路径：先理解原理，
-      再读懂架构与代码，最后通过 Spec 练习和项目把能力做出来。
-    </p>
+  <div class="site-hero__grid">
+    <div class="site-hero__content">
+      <p class="site-hero__eyebrow">RAG 与 Agent 学习网站</p>
+      <h1 class="site-hero__title">AI 架构师训练路线</h1>
+      <p class="site-hero__lede">
+        从基础认知、检索增强到 Agent 编排与生产级系统，围绕真实项目建立完整的
+        AI 系统设计与落地能力。
+      </p>
+      <p class="site-hero__body">
+        这不是只背概念的知识清单，而是一条“理论 + 实战”并行的学习路径：先理解原理，
+        再读懂架构与代码，最后通过 Spec 练习和项目把能力做出来。
+      </p>
+      <div class="site-hero__metrics" aria-label="课程概览">
+        {metrics.map((metric) => (
+          <div class="site-hero__metric">
+            <span class="site-hero__metric-value">{metric.value}</span>
+            <span class="site-hero__metric-label">{metric.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <aside class="site-hero__panel" aria-label="训练重点">
+      <p class="site-hero__panel-eyebrow">训练重点</p>
+      <ul class="site-hero__focus-list">
+        {focusAreas.map((area) => (
+          <li class="site-hero__focus-item">{area}</li>
+        ))}
+      </ul>
+      <p class="site-hero__panel-note">
+        适合希望系统补齐 RAG 与 Agent 工程能力，并且按阶段项目稳步推进的自学者。
+      </p>
+    </aside>
   </div>
 </section>
 
@@ -22,14 +57,34 @@
     border: 1px solid rgba(15, 118, 110, 0.16);
     border-radius: calc(var(--radius-lg) + 6px);
     background:
-      linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(255, 255, 255, 0.92) 52%),
-      radial-gradient(circle at top right, rgba(11, 79, 74, 0.2), transparent 32%);
-    box-shadow: 0 24px 70px rgba(16, 34, 39, 0.08);
+      linear-gradient(135deg, rgba(15, 118, 110, 0.18), rgba(255, 255, 255, 0.94) 54%),
+      radial-gradient(circle at top right, rgba(11, 79, 74, 0.24), transparent 32%);
+    box-shadow:
+      0 24px 70px rgba(16, 34, 39, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+
+  .site-hero::after {
+    content: '';
+    position: absolute;
+    right: -4rem;
+    top: -3rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.42), transparent 65%);
+    pointer-events: none;
+  }
+
+  .site-hero__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.95fr);
+    gap: 1.2rem;
   }
 
   .site-hero__content {
-    position: relative;
-    z-index: 1;
     display: grid;
     gap: 0.9rem;
   }
@@ -62,5 +117,92 @@
   .site-hero__lede {
     font-size: 1.05rem;
     color: var(--text);
+  }
+
+  .site-hero__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.35rem;
+  }
+
+  .site-hero__metric {
+    display: grid;
+    gap: 0.18rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .site-hero__metric-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent-strong);
+  }
+
+  .site-hero__metric-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .site-hero__panel {
+    align-self: stretch;
+    display: grid;
+    gap: 0.8rem;
+    padding: 1.1rem;
+    border: 1px solid rgba(16, 34, 39, 0.08);
+    border-radius: calc(var(--radius-md) + 2px);
+    background:
+      linear-gradient(180deg, rgba(11, 79, 74, 0.08), rgba(255, 255, 255, 0.86)),
+      rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56);
+  }
+
+  .site-hero__panel-eyebrow,
+  .site-hero__panel-note {
+    margin: 0;
+  }
+
+  .site-hero__panel-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .site-hero__focus-list {
+    display: grid;
+    gap: 0.6rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .site-hero__focus-item {
+    padding: 0.8rem 0.9rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--text);
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .site-hero__panel-note {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 860px) {
+    .site-hero__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .site-hero__metrics {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 </style>

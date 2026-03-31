@@ -55,6 +55,8 @@ const cadenceText = isModuleVariant
 
 <style>
   .stage-project-card {
+    position: relative;
+    overflow: hidden;
     display: grid;
     gap: 1rem;
     padding: 1.35rem;
@@ -64,6 +66,16 @@ const cadenceText = isModuleVariant
       linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.94) 52%),
       rgba(255, 255, 255, 0.9);
     box-shadow: 0 24px 60px rgba(16, 34, 39, 0.08);
+  }
+
+  .stage-project-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.82), rgba(15, 118, 110, 0.16));
   }
 
   .stage-project-card__header,
@@ -130,7 +142,9 @@ const cadenceText = isModuleVariant
     gap: 0.4rem;
     padding: 1rem;
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.74);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(244, 250, 249, 0.72)),
+      rgba(255, 255, 255, 0.74);
   }
 
   .stage-project-card__detail p:last-child {

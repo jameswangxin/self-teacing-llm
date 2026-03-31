@@ -22,6 +22,8 @@ const { moduleId } = Astro.props;
 
 <style>
   .completion-toggle {
+    position: relative;
+    overflow: hidden;
     display: inline-grid;
     gap: 0.3rem;
     width: fit-content;
@@ -38,6 +40,14 @@ const { moduleId } = Astro.props;
       border-color 160ms ease,
       box-shadow 160ms ease,
       transform 160ms ease;
+  }
+
+  .completion-toggle::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.42), rgba(15, 118, 110, 0.12));
   }
 
   .completion-toggle:not(:disabled) {
@@ -60,6 +70,10 @@ const { moduleId } = Astro.props;
     background:
       linear-gradient(135deg, rgba(15, 118, 110, 0.2), rgba(230, 248, 244, 0.98)),
       rgba(255, 255, 255, 0.98);
+  }
+
+  .completion-toggle[data-complete='true']::before {
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.9), rgba(15, 118, 110, 0.3));
   }
 
   .completion-toggle__label {

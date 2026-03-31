@@ -50,6 +50,8 @@ const prerequisitesLabel =
 
 <style>
   .module-list-item {
+    position: relative;
+    overflow: hidden;
     display: grid;
     gap: 1rem;
     padding: 1.15rem 1.2rem;
@@ -59,6 +61,17 @@ const prerequisitesLabel =
       linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 250, 249, 0.92)),
       rgba(255, 255, 255, 0.92);
     box-shadow: 0 14px 34px rgba(16, 34, 39, 0.05);
+  }
+
+  .module-list-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.18), rgba(15, 118, 110, 0.04));
+    transition: background 160ms ease;
   }
 
   .module-list-item--linked {
@@ -72,6 +85,17 @@ const prerequisitesLabel =
     transform: translateY(-2px);
     border-color: rgba(15, 118, 110, 0.28);
     box-shadow: 0 20px 42px rgba(16, 34, 39, 0.08);
+  }
+
+  .module-list-item[data-complete='true'] {
+    border-color: rgba(15, 118, 110, 0.24);
+    background:
+      linear-gradient(180deg, rgba(241, 252, 249, 0.98), rgba(235, 248, 245, 0.94)),
+      rgba(255, 255, 255, 0.94);
+  }
+
+  .module-list-item[data-complete='true']::before {
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.78), rgba(15, 118, 110, 0.22));
   }
 
   .module-list-item__header,
@@ -128,6 +152,7 @@ const prerequisitesLabel =
 
   .module-list-item__point {
     padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(15, 118, 110, 0.12);
     border-radius: 999px;
     color: var(--accent-strong);
     background: rgba(15, 118, 110, 0.09);

@@ -12,8 +12,11 @@ const href = `/stages/${stage.slug}/`;
 <article class="stage-card">
   <a class="stage-card__link" href={href}>
     <div class="stage-card__header">
-      <p class="stage-card__kicker">Stage {stage.number}</p>
-      <h2 class="stage-card__title">{stage.title}</h2>
+      <div>
+        <p class="stage-card__kicker">Stage {stage.number}</p>
+        <h2 class="stage-card__title">{stage.title}</h2>
+      </div>
+      <span class="stage-card__count">{stage.moduleIds.length} 个模块</span>
     </div>
     <p class="stage-card__summary">{stage.summary}</p>
     <p class="stage-card__goal">
@@ -25,7 +28,10 @@ const href = `/stages/${stage.slug}/`;
         <p class="stage-card__footer-label">阶段项目</p>
         <p>{stage.project}</p>
       </div>
-      <span class="stage-card__cta">进入该阶段</span>
+      <div class="stage-card__cta-group">
+        <span class="stage-card__path">路线节点 {stage.number}/6</span>
+        <span class="stage-card__cta">进入该阶段</span>
+      </div>
     </div>
   </a>
 </article>
@@ -85,6 +91,20 @@ const href = `/stages/${stage.slug}/`;
     background: white;
   }
 
+  .stage-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), transparent 36%);
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .stage-card__link:hover::after {
+    opacity: 1;
+  }
+
   .stage-card__header,
   .stage-card__footer {
     display: flex;
@@ -110,6 +130,21 @@ const href = `/stages/${stage.slug}/`;
     margin: 0;
   }
 
+  .stage-card__count {
+    align-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--accent-strong);
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
   .stage-card__title {
     font-size: 1.45rem;
   }
@@ -132,6 +167,18 @@ const href = `/stages/${stage.slug}/`;
     min-width: 0;
   }
 
+  .stage-card__cta-group {
+    align-self: center;
+    display: grid;
+    gap: 0.45rem;
+    justify-items: end;
+  }
+
+  .stage-card__path {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
   .stage-card__cta {
     align-self: center;
     flex-shrink: 0;
@@ -150,6 +197,10 @@ const href = `/stages/${stage.slug}/`;
 
     .stage-card__link {
       padding-left: 2.1rem;
+    }
+
+    .stage-card__cta-group {
+      justify-items: start;
     }
   }
 </style>
