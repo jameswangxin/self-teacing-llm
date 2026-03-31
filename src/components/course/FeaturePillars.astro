@@ -1,0 +1,91 @@
+---
+const pillars = [
+  {
+    title: '理论',
+    description: '建立对 LLM、RAG 与 Agent 的核心认知，知道每个模块为什么存在。'
+  },
+  {
+    title: '实战',
+    description: '用阶段项目把抽象概念落到真实系统，从 Demo 走到可交付方案。'
+  },
+  {
+    title: 'Spec Coding',
+    description: '先读规范、拆任务、理解代码结构，再训练工程化实现与协作能力。'
+  }
+];
+---
+
+<section class="feature-pillars" aria-labelledby="feature-pillars-title">
+  <div class="feature-pillars__heading">
+    <p class="feature-pillars__eyebrow">课程特色</p>
+    <h2 id="feature-pillars-title" class="feature-pillars__title">三条主线并行推进</h2>
+  </div>
+  <div class="feature-pillars__grid">
+    {pillars.map((pillar) => (
+      <article class="feature-pillars__card">
+        <h3>{pillar.title}</h3>
+        <p>{pillar.description}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .feature-pillars {
+    margin: 0 0 1.5rem;
+  }
+
+  .feature-pillars__heading {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-pillars__eyebrow {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .feature-pillars__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .feature-pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .feature-pillars__card {
+    padding: 1.15rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.76);
+  }
+
+  .feature-pillars__card h3,
+  .feature-pillars__card p {
+    margin: 0;
+  }
+
+  .feature-pillars__card h3 {
+    margin-bottom: 0.45rem;
+    font-size: 1.05rem;
+  }
+
+  .feature-pillars__card p {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 720px) {
+    .feature-pillars__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

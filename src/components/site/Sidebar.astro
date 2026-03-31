@@ -1,0 +1,119 @@
+---
+import type { CourseStage } from '../../data/course/schema';
+import type { SidebarModel } from '../../lib/course';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  model: SidebarModel<CourseStage>;
+  variant?: 'desktop' | 'drawer';
+}
+
+const { model, variant = 'desktop' } = Astro.props;
+const showModules = model.pageType === 'stage' || model.pageType === 'module';
+const viewTitle = showModules ? '当前阶段导航' : '课程阶段';
+const viewLabel = showModules ? '章节视图' : '阶段视图';
+const canLinkModules = model.pageType === 'module';
+---
+
+<nav
+  class:list={['docs-sidebar', variant === 'drawer' && 'docs-sidebar--drawer']}
+  aria-label={variant === 'drawer' ? '移动端课程导航' : '课程导航'}
+>
+  <div class="docs-sidebar__header">
+    <div>
+      <p class="docs-sidebar__eyebrow">Course Map</p>
+      <h2 class="docs-sidebar__title">{viewTitle}</h2>
+    </div>
+    <Badge variant="status">{viewLabel}</Badge>
+  </div>
+
+  {
+    model.items.length > 0 ? (
+      <ol class="docs-sidebar__list">
+        {model.items.map((item) => (
+          <li class="docs-sidebar__item">
+            <a
+              class:list={[
+                'docs-sidebar__stage',
+                item.isExpanded && 'docs-sidebar__stage--expanded'
+              ]}
+              href={item.href}
+              aria-current={item.isCurrent ? 'page' : undefined}
+            >
+              <div class="docs-sidebar__stage-main">
+                <Badge variant="number">{item.stage.number}</Badge>
+                <div class="docs-sidebar__stage-copy">
+                  <p class="docs-sidebar__stage-title">{item.stage.title}</p>
+                  <p class="docs-sidebar__stage-summary">{item.stage.summary}</p>
+                </div>
+              </div>
+              {item.isCurrent && (
+                <Badge variant="status" active>
+                  进行中
+                </Badge>
+              )}
+            </a>
+
+            {item.isExpanded && item.modules.length > 0 && (
+              <ol class="docs-sidebar__module-list">
+                {item.modules.map((module, index) => (
+                  <li>
+                    {canLinkModules && module.href ? (
+                      <a
+                        class:list={[
+                          'docs-sidebar__module',
+                          module.isCurrent && 'docs-sidebar__module--current'
+                        ]}
+                        href={module.href}
+                        aria-current={module.isCurrent ? 'page' : undefined}
+                      >
+                        <span class="docs-sidebar__module-title">
+                          {module.title ?? `模块 ${index + 1}`}
+                        </span>
+                        {module.isCurrent ? (
+                          <Badge variant="status" active>
+                            当前
+                          </Badge>
+                        ) : (
+                          <span class="docs-sidebar__module-meta">
+                            {module.id}
+                          </span>
+                        )}
+                      </a>
+                    ) : (
+                      <div
+                        class:list={[
+                          'docs-sidebar__module',
+                          module.isCurrent && 'docs-sidebar__module--current'
+                        ]}
+                      >
+                        <span class="docs-sidebar__module-title">
+                          {module.title ?? `模块 ${index + 1}`}
+                        </span>
+                        <span class="docs-sidebar__module-meta">{module.id}</span>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="docs-sidebar__empty">课程结构整理中，稍后会在这里显示阶段与模块导航。</p>
+    )
+  }
+</nav>
+
+<style>
+  .docs-sidebar__module--current {
+    color: var(--accent-strong);
+    background: rgba(15, 118, 110, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.16);
+  }
+
+  .docs-sidebar__module--current .docs-sidebar__module-meta {
+    color: var(--accent-strong);
+  }
+</style>

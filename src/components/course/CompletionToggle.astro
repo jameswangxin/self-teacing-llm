@@ -1,0 +1,74 @@
+---
+interface Props {
+  moduleId: string;
+}
+
+const { moduleId } = Astro.props;
+---
+
+<button
+  type="button"
+  class="completion-toggle"
+  data-completion-toggle
+  data-module-id={moduleId}
+  data-complete="false"
+  aria-label="切换当前模块完成状态"
+  aria-pressed="false"
+  disabled
+>
+  <span class="completion-toggle__label" data-completion-toggle-label>标记为已完成</span>
+  <span class="completion-toggle__hint" data-completion-toggle-hint>将在当前浏览器保存学习进度</span>
+</button>
+
+<style>
+  .completion-toggle {
+    display: inline-grid;
+    gap: 0.3rem;
+    width: fit-content;
+    min-height: 3.2rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.96)),
+      rgba(255, 255, 255, 0.96);
+    color: var(--text);
+    text-align: left;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .completion-toggle:not(:disabled) {
+    cursor: pointer;
+  }
+
+  .completion-toggle:not(:disabled):hover {
+    transform: translateY(-1px);
+    border-color: rgba(15, 118, 110, 0.28);
+    box-shadow: 0 14px 32px rgba(16, 34, 39, 0.08);
+  }
+
+  .completion-toggle:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .completion-toggle[data-complete='true'] {
+    border-color: rgba(15, 118, 110, 0.26);
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.2), rgba(230, 248, 244, 0.98)),
+      rgba(255, 255, 255, 0.98);
+  }
+
+  .completion-toggle__label {
+    font-weight: 700;
+  }
+
+  .completion-toggle__hint {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+</style>

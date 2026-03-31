@@ -1,0 +1,164 @@
+---
+import type { CourseModule } from '../../data/course/schema';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  module: CourseModule;
+  href?: string | null;
+}
+
+const { module, href = null } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const prerequisitesLabel =
+  module.prerequisites.length > 0
+    ? `前置模块：${module.prerequisites.join(' / ')}`
+    : '可直接开始';
+---
+
+<Tag
+  class:list={['module-list-item', href && 'module-list-item--linked']}
+  href={href ?? undefined}
+  data-module-progress-row
+  data-module-id={module.id}
+  data-complete="false"
+>
+  <div class="module-list-item__header">
+    <div class="module-list-item__heading">
+      <Badge variant="number">{module.number}</Badge>
+      <div>
+        <h3 class="module-list-item__title">{module.title}</h3>
+        <p class="module-list-item__summary">{module.summary}</p>
+      </div>
+    </div>
+    <div class="module-list-item__meta">
+      <Badge variant="time">{module.estimatedTime}</Badge>
+      <span class="module-list-item__completion" data-module-progress-badge data-module-id={module.id} hidden>
+        已完成
+      </span>
+    </div>
+  </div>
+
+  <div class="module-list-item__footer">
+    <p class="module-list-item__prerequisites">{prerequisitesLabel}</p>
+    <div class="module-list-item__points" aria-label="本模块重点">
+      {module.keyPoints.slice(0, 3).map((point) => (
+        <span class="module-list-item__point">{point}</span>
+      ))}
+    </div>
+  </div>
+</Tag>
+
+<style>
+  .module-list-item {
+    display: grid;
+    gap: 1rem;
+    padding: 1.15rem 1.2rem;
+    border: 1px solid rgba(15, 118, 110, 0.14);
+    border-radius: calc(var(--radius-md) + 2px);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 250, 249, 0.92)),
+      rgba(255, 255, 255, 0.92);
+    box-shadow: 0 14px 34px rgba(16, 34, 39, 0.05);
+  }
+
+  .module-list-item--linked {
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .module-list-item--linked:hover {
+    transform: translateY(-2px);
+    border-color: rgba(15, 118, 110, 0.28);
+    box-shadow: 0 20px 42px rgba(16, 34, 39, 0.08);
+  }
+
+  .module-list-item__header,
+  .module-list-item__heading {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.9rem;
+  }
+
+  .module-list-item__heading {
+    min-width: 0;
+    justify-content: start;
+  }
+
+  .module-list-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: end;
+    gap: 0.55rem;
+  }
+
+  .module-list-item__title,
+  .module-list-item__summary,
+  .module-list-item__prerequisites {
+    margin: 0;
+  }
+
+  .module-list-item__title {
+    font-size: 1.05rem;
+  }
+
+  .module-list-item__summary,
+  .module-list-item__prerequisites {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .module-list-item__summary {
+    margin-top: 0.25rem;
+  }
+
+  .module-list-item__footer {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .module-list-item__points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .module-list-item__point {
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    color: var(--accent-strong);
+    background: rgba(15, 118, 110, 0.09);
+    font-size: 0.88rem;
+    line-height: 1.35;
+  }
+
+  .module-list-item__completion {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.16);
+    color: var(--accent-strong);
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 720px) {
+    .module-list-item__header {
+      flex-direction: column;
+    }
+
+    .module-list-item__heading {
+      flex-direction: column;
+    }
+
+    .module-list-item__meta {
+      justify-content: start;
+    }
+  }
+</style>

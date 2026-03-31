@@ -1,0 +1,66 @@
+<section class="site-hero">
+  <div class="site-hero__content">
+    <p class="site-hero__eyebrow">RAG 与 Agent 学习网站</p>
+    <h1 class="site-hero__title">AI 架构师训练路线</h1>
+    <p class="site-hero__lede">
+      从基础认知、检索增强到 Agent 编排与生产级系统，围绕真实项目建立完整的
+      AI 系统设计与落地能力。
+    </p>
+    <p class="site-hero__body">
+      这不是只背概念的知识清单，而是一条“理论 + 实战”并行的学习路径：先理解原理，
+      再读懂架构与代码，最后通过 Spec 练习和项目把能力做出来。
+    </p>
+  </div>
+</section>
+
+<style>
+  .site-hero {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: calc(var(--radius-lg) + 6px);
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(255, 255, 255, 0.92) 52%),
+      radial-gradient(circle at top right, rgba(11, 79, 74, 0.2), transparent 32%);
+    box-shadow: 0 24px 70px rgba(16, 34, 39, 0.08);
+  }
+
+  .site-hero__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .site-hero__eyebrow {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+
+  .site-hero__title {
+    margin: 0;
+    font-size: clamp(2.3rem, 5vw, 3.8rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .site-hero__lede,
+  .site-hero__body {
+    max-width: 42rem;
+    margin: 0;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  .site-hero__lede {
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+</style>

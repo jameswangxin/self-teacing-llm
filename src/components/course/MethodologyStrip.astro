@@ -1,0 +1,59 @@
+---
+const steps = ['概念讲解', '架构图解', '代码识谱', 'Spec 练习', '实战项目'];
+---
+
+<section class="methodology-strip" aria-labelledby="methodology-strip-title">
+  <p class="methodology-strip__eyebrow">学习方法</p>
+  <h2 id="methodology-strip-title" class="methodology-strip__title">从理解到落地的训练节奏</h2>
+  <div class="methodology-strip__rail" aria-label="学习方法流程">
+    {steps.map((step, index) => (
+      <>
+        <span class="methodology-strip__step">{step}</span>
+        {index < steps.length - 1 && <span class="methodology-strip__arrow" aria-hidden="true">-&gt;</span>}
+      </>
+    ))}
+  </div>
+</section>
+
+<style>
+  .methodology-strip {
+    margin-top: 1.75rem;
+    padding: 1.2rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(11, 79, 74, 0.05);
+  }
+
+  .methodology-strip__eyebrow {
+    margin: 0 0 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .methodology-strip__title {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+  }
+
+  .methodology-strip__rail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  .methodology-strip__step {
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .methodology-strip__arrow {
+    color: var(--accent);
+  }
+</style>

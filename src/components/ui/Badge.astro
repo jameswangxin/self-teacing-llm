@@ -1,0 +1,14 @@
+---
+type BadgeVariant = 'number' | 'time' | 'status';
+
+interface Props {
+  variant?: BadgeVariant;
+  active?: boolean;
+}
+
+const { variant = 'status', active = false } = Astro.props;
+---
+
+<span class:list={['badge', `badge--${variant}`, active && 'badge--active']}>
+  <slot />
+</span>

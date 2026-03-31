@@ -1,0 +1,40 @@
+---
+import { modules } from '../../data/course/modules';
+import { stages } from '../../data/course/stages';
+import { getCourseModulesInOrder } from '../../lib/course';
+
+const orderedModules = getCourseModulesInOrder(stages, modules).map((module) => ({
+  id: module.id,
+  href: `/modules/${module.slug}/`
+}));
+---
+
+<a
+  class="continue-learning-link"
+  href="/modules/"
+  data-continue-learning-link
+  data-course-modules={JSON.stringify(orderedModules)}
+>
+  继续学习
+</a>
+
+<script>
+  import { initContinueLearning } from '../../scripts/continue-learning.ts';
+
+  initContinueLearning();
+</script>
+
+<style>
+  .continue-learning-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.8rem;
+    padding: 0.7rem 1rem;
+    margin: 0 0 1.5rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+  }
+</style>

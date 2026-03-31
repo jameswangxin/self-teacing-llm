@@ -1,0 +1,227 @@
+---
+import type { CourseStage } from '../../data/course/schema';
+import type { SidebarModel } from '../../lib/course';
+import Sidebar from './Sidebar.astro';
+
+interface Props {
+  model: SidebarModel<CourseStage>;
+  currentPath: string;
+}
+
+const { model, currentPath } = Astro.props;
+---
+
+<div class="nav-drawer" data-nav-drawer data-open="false">
+  <button
+    type="button"
+    class="nav-drawer__toggle"
+    data-drawer-open
+    aria-expanded="false"
+    aria-controls="site-mobile-drawer"
+    aria-label="打开课程导航"
+  >
+    <span class="nav-drawer__icon" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+
+  <button
+    type="button"
+    class="nav-drawer__backdrop"
+    data-drawer-close
+    aria-label="关闭课程导航"
+    tabindex="-1"
+  ></button>
+
+  <div
+    class="nav-drawer__panel"
+    id="site-mobile-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-label="课程导航"
+    tabindex="-1"
+  >
+    <div class="nav-drawer__nav">
+      <button
+        type="button"
+        class="nav-drawer__close"
+        data-drawer-close
+        data-drawer-close-panel
+        aria-label="关闭课程导航"
+      >
+        关闭
+      </button>
+      <span class="nav-drawer__focus-guard" tabindex="0" data-drawer-focus-start aria-hidden="true"></span>
+      <nav class="nav-drawer__toplinks" aria-label="移动端站点导航">
+        <a
+          class="nav-drawer__toplink"
+          href="/"
+          aria-current={currentPath === '/' ? 'page' : undefined}
+        >
+          首页
+        </a>
+        <a
+          class="nav-drawer__toplink"
+          href="/modules/"
+          aria-current={currentPath.startsWith('/modules/') || currentPath === '/modules' ? 'page' : undefined}
+        >
+          模块目录
+        </a>
+      </nav>
+      <Sidebar model={model} variant="drawer" />
+      <span class="nav-drawer__focus-guard" tabindex="0" data-drawer-focus-end aria-hidden="true"></span>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  const initNavDrawers = () => {
+    for (const root of document.querySelectorAll('[data-nav-drawer]')) {
+      if (!(root instanceof HTMLElement) || root.dataset.bound === 'true') {
+        continue;
+      }
+
+      root.dataset.bound = 'true';
+
+      const openButton = root.querySelector('[data-drawer-open]');
+      const closeButtons = root.querySelectorAll('[data-drawer-close]');
+      const panel = root.querySelector('.nav-drawer__panel');
+      const firstGuard = root.querySelector('[data-drawer-focus-start]');
+      const lastGuard = root.querySelector('[data-drawer-focus-end]');
+
+      if (
+        !(openButton instanceof HTMLButtonElement) ||
+        !(panel instanceof HTMLElement) ||
+        !(firstGuard instanceof HTMLElement) ||
+        !(lastGuard instanceof HTMLElement)
+      ) {
+        continue;
+      }
+
+      const topNavInner = root.parentElement;
+      const inertTargets = [
+        ...document.querySelectorAll('[data-nav-main]'),
+        ...(topNavInner
+          ? [...topNavInner.children].filter((child) => child !== root)
+          : [])
+      ].filter((node) => node instanceof HTMLElement);
+
+      let lastFocused = null;
+
+      const getFocusable = () =>
+        [...panel.querySelectorAll(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )].filter((element) => element instanceof HTMLElement && !element.hasAttribute('inert'));
+
+      const focusFirst = () => {
+        const [first] = getFocusable();
+        if (first instanceof HTMLElement) {
+          first.focus();
+        } else {
+          panel.focus();
+        }
+      };
+
+      const focusLast = () => {
+        const focusable = getFocusable();
+        const last = focusable[focusable.length - 1];
+        if (last instanceof HTMLElement) {
+          last.focus();
+        } else {
+          panel.focus();
+        }
+      };
+
+      const setOpen = (open) => {
+        root.dataset.open = open ? 'true' : 'false';
+        openButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+        openButton.setAttribute('aria-label', open ? '关闭课程导航' : '打开课程导航');
+        document.body.style.overflow = open ? 'hidden' : '';
+
+        for (const target of inertTargets) {
+          if (target instanceof HTMLElement) {
+            target.inert = open;
+          }
+        }
+
+        if (open) {
+          lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : openButton;
+          requestAnimationFrame(() => focusFirst());
+          return;
+        }
+
+        const focusTarget = lastFocused instanceof HTMLElement ? lastFocused : openButton;
+        requestAnimationFrame(() => focusTarget.focus());
+        lastFocused = null;
+      };
+
+      openButton.addEventListener('click', () => {
+        setOpen(root.dataset.open !== 'true');
+      });
+
+      for (const button of closeButtons) {
+        if (button instanceof HTMLButtonElement) {
+          button.addEventListener('click', () => setOpen(false));
+        }
+      }
+
+      panel.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest('a[href]')) {
+          setOpen(false);
+        }
+      });
+
+      panel.addEventListener('keydown', (event) => {
+        if (event.key !== 'Tab' || root.dataset.open !== 'true') {
+          return;
+        }
+
+        const focusable = getFocusable();
+        if (focusable.length === 0) {
+          event.preventDefault();
+          panel.focus();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+
+        if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        } else if (event.shiftKey && active === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && root.dataset.open === 'true') {
+          setOpen(false);
+        }
+      });
+
+      firstGuard.addEventListener('focus', () => {
+        if (root.dataset.open === 'true') {
+          focusLast();
+        }
+      });
+
+      lastGuard.addEventListener('focus', () => {
+        if (root.dataset.open === 'true') {
+          focusFirst();
+        }
+      });
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNavDrawers, { once: true });
+  } else {
+    initNavDrawers();
+  }
+</script>

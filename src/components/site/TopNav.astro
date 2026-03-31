@@ -1,0 +1,47 @@
+---
+import type { CourseStage } from '../../data/course/schema';
+import type { SidebarModel } from '../../lib/course';
+import Badge from '../ui/Badge.astro';
+import NavDrawerToggle from './NavDrawerToggle.astro';
+
+interface Props {
+  currentPath: string;
+  model: SidebarModel<CourseStage>;
+}
+
+const { currentPath, model } = Astro.props;
+const isHomePage = currentPath === '/';
+---
+
+<header class="site-topnav">
+  <div class="site-topnav__inner">
+    <div class="site-topnav__brand">
+      <a class="site-topnav__brand-link" href="/">RAG 与 Agent 学习网站</a>
+      <div class="site-topnav__meta">
+        <Badge variant="time">5-20 分钟 / 节</Badge>
+        <Badge variant="status" active={!isHomePage}>
+          {isHomePage ? '课程导览' : '正在学习'}
+        </Badge>
+      </div>
+    </div>
+
+    <nav class="site-topnav__links" aria-label="站点导航">
+      <a
+        class="site-topnav__link"
+        href="/"
+        aria-current={currentPath === '/' ? 'page' : undefined}
+      >
+        首页
+      </a>
+      <a
+        class="site-topnav__link"
+        href="/modules/"
+        aria-current={currentPath.startsWith('/modules/') || currentPath === '/modules' ? 'page' : undefined}
+      >
+        模块目录
+      </a>
+    </nav>
+
+    <NavDrawerToggle model={model} currentPath={currentPath} />
+  </div>
+</header>

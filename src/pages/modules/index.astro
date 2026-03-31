@@ -1,0 +1,147 @@
+---
+import ModuleListItem from '../../components/course/ModuleListItem.astro';
+import ProgressBootstrap from '../../components/course/ProgressBootstrap.astro';
+import StorageNotice from '../../components/course/StorageNotice.astro';
+import Badge from '../../components/ui/Badge.astro';
+import { modules } from '../../data/course/modules';
+import { stages } from '../../data/course/stages';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { buildSidebarModel, groupModulesByStage } from '../../lib/course';
+
+const sidebar = buildSidebarModel(stages, modules, 'module-index');
+const groupedModules = groupModulesByStage(stages, modules);
+---
+
+<DocsLayout title="模块目录 | RAG 与 Agent 学习网站" sidebar={sidebar}>
+  <section class="module-index-hero">
+    <div class="module-index-hero__copy">
+      <p class="module-index-hero__eyebrow">All Modules</p>
+      <h1 class="module-index-hero__title">按阶段浏览全部模块</h1>
+      <p class="module-index-hero__summary">
+        这里汇总了全部 {stages.length} 个阶段的课程模块，适合快速扫描主题分布、学习强度和前置关系。
+      </p>
+    </div>
+    <div class="module-index-hero__stats">
+      <Badge variant="number">{stages.length} 个阶段</Badge>
+      <Badge variant="time">{modules.length} 个模块</Badge>
+    </div>
+  </section>
+
+  <StorageNotice />
+  <ProgressBootstrap />
+
+  <div class="module-index-groups">
+    {groupedModules.map((group) =>
+      group.stage ? (
+        <section class="module-stage-group" aria-labelledby={`module-stage-${group.stage.slug}`}>
+          <div class="module-stage-group__header">
+            <div>
+              <p class="module-stage-group__eyebrow">Stage {group.stage.number}</p>
+              <h2 class="module-stage-group__title" id={`module-stage-${group.stage.slug}`}>
+                <a href={`/stages/${group.stage.slug}/`}>{group.stage.title}</a>
+              </h2>
+              <p class="module-stage-group__summary">{group.stage.summary}</p>
+            </div>
+            <Badge variant="status">{group.modules.length} 个模块</Badge>
+          </div>
+
+          <ol class="module-stage-group__list">
+            {group.modules.map((module) => (
+              <li>
+                <ModuleListItem module={module} />
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null
+    )}
+  </div>
+</DocsLayout>
+
+<style>
+  .module-index-hero,
+  .module-stage-group {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .module-index-hero {
+    padding: 0 0 1.75rem;
+    border-bottom: 1px solid rgba(16, 34, 39, 0.08);
+  }
+
+  .module-index-hero__eyebrow,
+  .module-stage-group__eyebrow {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .module-index-hero__title,
+  .module-index-hero__summary,
+  .module-stage-group__title,
+  .module-stage-group__summary {
+    margin: 0;
+  }
+
+  .module-index-hero__title {
+    margin-top: 0.25rem;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+  }
+
+  .module-index-hero__summary,
+  .module-stage-group__summary {
+    margin-top: 0.6rem;
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 62ch;
+  }
+
+  .module-index-hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .module-index-groups {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+  }
+
+  .module-stage-group {
+    padding: 1.2rem;
+    border: 1px solid rgba(15, 118, 110, 0.14);
+    border-radius: calc(var(--radius-lg) + 2px);
+    background: rgba(255, 255, 255, 0.66);
+  }
+
+  .module-stage-group__header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .module-stage-group__title {
+    margin-top: 0.3rem;
+    font-size: 1.45rem;
+  }
+
+  .module-stage-group__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  @media (max-width: 720px) {
+    .module-stage-group__header {
+      flex-direction: column;
+    }
+  }
+</style>

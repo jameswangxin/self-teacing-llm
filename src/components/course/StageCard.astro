@@ -1,0 +1,155 @@
+---
+import type { CourseStage } from '../../data/course/schema';
+
+interface Props {
+  stage: CourseStage;
+}
+
+const { stage } = Astro.props;
+const href = `/stages/${stage.slug}/`;
+---
+
+<article class="stage-card">
+  <a class="stage-card__link" href={href}>
+    <div class="stage-card__header">
+      <p class="stage-card__kicker">Stage {stage.number}</p>
+      <h2 class="stage-card__title">{stage.title}</h2>
+    </div>
+    <p class="stage-card__summary">{stage.summary}</p>
+    <p class="stage-card__goal">
+      <span>阶段目标</span>
+      {stage.goal}
+    </p>
+    <div class="stage-card__footer">
+      <div class="stage-card__project">
+        <p class="stage-card__footer-label">阶段项目</p>
+        <p>{stage.project}</p>
+      </div>
+      <span class="stage-card__cta">进入该阶段</span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .stage-card {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .stage-card::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    bottom: -1rem;
+    width: 2px;
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.35), rgba(15, 118, 110, 0));
+  }
+
+  .stage-card:last-of-type::before {
+    display: none;
+  }
+
+  .stage-card__link {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    padding: 1.35rem 1.35rem 1.35rem 2.35rem;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: calc(var(--radius-md) + 4px);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(244, 250, 249, 0.92)),
+      rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 50px rgba(16, 34, 39, 0.06);
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .stage-card__link:hover {
+    transform: translateY(-2px);
+    border-color: rgba(15, 118, 110, 0.28);
+    box-shadow: 0 24px 60px rgba(16, 34, 39, 0.1);
+  }
+
+  .stage-card__link::before {
+    content: '';
+    position: absolute;
+    left: 0.9rem;
+    top: 1.5rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 3px solid rgba(15, 118, 110, 0.32);
+    border-radius: 999px;
+    background: white;
+  }
+
+  .stage-card__header,
+  .stage-card__footer {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .stage-card__kicker,
+  .stage-card__footer-label {
+    margin: 0 0 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .stage-card__title,
+  .stage-card__summary,
+  .stage-card__goal,
+  .stage-card__project p {
+    margin: 0;
+  }
+
+  .stage-card__title {
+    font-size: 1.45rem;
+  }
+
+  .stage-card__summary,
+  .stage-card__goal,
+  .stage-card__project p {
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .stage-card__goal span {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .stage-card__project {
+    min-width: 0;
+  }
+
+  .stage-card__cta {
+    align-self: center;
+    flex-shrink: 0;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  @media (max-width: 720px) {
+    .stage-card__header,
+    .stage-card__footer {
+      flex-direction: column;
+    }
+
+    .stage-card__link {
+      padding-left: 2.1rem;
+    }
+  }
+</style>

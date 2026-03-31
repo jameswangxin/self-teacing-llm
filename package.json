@@ -1,0 +1,21 @@
+{
+  "name": "self-teaching-llm",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "verify:links": "node scripts/verify-links.mjs",
+    "verify": "npm run test && npm run check && npm run build && npm run verify:links"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "@types/node": "^25.5.0",
+    "astro": "^5.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}

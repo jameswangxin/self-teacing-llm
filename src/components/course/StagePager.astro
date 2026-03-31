@@ -1,0 +1,99 @@
+---
+import type { CourseStage } from '../../data/course/schema';
+
+interface Props {
+  previousStage?: CourseStage | null;
+  nextStage?: CourseStage | null;
+}
+
+const { previousStage = null, nextStage = null } = Astro.props;
+---
+
+{(previousStage || nextStage) && (
+  <nav class="stage-pager" aria-label="阶段切换">
+    {previousStage && (
+      <a class="stage-pager__link" href={`/stages/${previousStage.slug}/`}>
+        <p class="stage-pager__direction">上一阶段</p>
+        <p class="stage-pager__title">
+          <span aria-hidden="true">←</span>
+          Stage {previousStage.number} · {previousStage.title}
+        </p>
+        <p class="stage-pager__summary">{previousStage.summary}</p>
+      </a>
+    )}
+
+    {nextStage && (
+      <a class="stage-pager__link stage-pager__link--next" href={`/stages/${nextStage.slug}/`}>
+        <p class="stage-pager__direction">下一阶段</p>
+        <p class="stage-pager__title">
+          Stage {nextStage.number} · {nextStage.title}
+          <span aria-hidden="true">→</span>
+        </p>
+        <p class="stage-pager__summary">{nextStage.summary}</p>
+      </a>
+    )}
+  </nav>
+)}
+
+<style>
+  .stage-pager {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .stage-pager__link {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: calc(var(--radius-md) + 2px);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 18px 40px rgba(16, 34, 39, 0.05);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .stage-pager__link:hover {
+    transform: translateY(-2px);
+    border-color: rgba(15, 118, 110, 0.28);
+    box-shadow: 0 22px 46px rgba(16, 34, 39, 0.08);
+  }
+
+  .stage-pager__link--next {
+    text-align: right;
+  }
+
+  .stage-pager__direction,
+  .stage-pager__title,
+  .stage-pager__summary {
+    margin: 0;
+  }
+
+  .stage-pager__direction {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .stage-pager__title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 1.02rem;
+    font-weight: 700;
+  }
+
+  .stage-pager__link--next .stage-pager__title {
+    justify-content: flex-end;
+  }
+
+  .stage-pager__summary {
+    color: var(--muted);
+    line-height: 1.55;
+  }
+</style>

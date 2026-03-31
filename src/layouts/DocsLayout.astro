@@ -1,0 +1,32 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import { modules } from '../data/course/modules';
+import { stages } from '../data/course/stages';
+import { buildSidebarModel } from '../lib/course';
+import TopNav from '../components/site/TopNav.astro';
+import Sidebar from '../components/site/Sidebar.astro';
+
+const { title, sidebar } = Astro.props;
+const currentPath = Astro.url.pathname;
+const navModel = sidebar ?? buildSidebarModel(stages, modules, 'modules');
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="site-frame">
+      <TopNav currentPath={currentPath} model={navModel} />
+      <div class:list={['page-shell', !sidebar && 'page-shell--full']} data-nav-main>
+        {sidebar && <Sidebar model={sidebar} />}
+        <main class="page-content">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

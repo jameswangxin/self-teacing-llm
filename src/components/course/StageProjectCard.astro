@@ -1,0 +1,154 @@
+---
+import type { CourseStage } from '../../data/course/schema';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  stage: CourseStage;
+  moduleCount: number;
+  variant?: 'stage' | 'module';
+  stageHref?: string | null;
+}
+
+const { stage, moduleCount, variant = 'stage', stageHref = null } = Astro.props;
+const isModuleVariant = variant === 'module';
+const cardTitle = isModuleVariant ? '把当前模块放回阶段项目里理解' : '用一个完整项目收束本阶段';
+const cadenceText = isModuleVariant
+  ? '完成当前模块后，可以继续按顺序推进，或返回阶段页查看完整模块路径，再把本节知识点映射到阶段项目里。'
+  : '先完成全部模块，再把关键能力整合成一个可展示、可复盘的阶段项目。';
+---
+
+<section class="stage-project-card" aria-labelledby={`stage-project-${stage.slug}`}>
+  <div class="stage-project-card__header">
+    <div>
+      <p class="stage-project-card__eyebrow">Stage Project</p>
+      <h2 class="stage-project-card__title" id={`stage-project-${stage.slug}`}>
+        {cardTitle}
+      </h2>
+    </div>
+    <div class="stage-project-card__badges">
+      <Badge variant="number">Stage {stage.number}</Badge>
+      <Badge variant="status">{moduleCount} 个模块</Badge>
+    </div>
+  </div>
+
+  <p class="stage-project-card__summary">{stage.project}</p>
+
+  <div class="stage-project-card__details">
+    <div class="stage-project-card__detail">
+      <p class="stage-project-card__label">阶段目标</p>
+      <p>{stage.goal}</p>
+    </div>
+    <div class="stage-project-card__detail">
+      <p class="stage-project-card__label">学习节奏</p>
+      <p>{cadenceText}</p>
+    </div>
+  </div>
+
+  {
+    isModuleVariant && stageHref && (
+      <a class="stage-project-card__link" href={stageHref}>
+        返回阶段页查看项目上下文
+      </a>
+    )
+  }
+</section>
+
+<style>
+  .stage-project-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.35rem;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: calc(var(--radius-lg) + 2px);
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.94) 52%),
+      rgba(255, 255, 255, 0.9);
+    box-shadow: 0 24px 60px rgba(16, 34, 39, 0.08);
+  }
+
+  .stage-project-card__header,
+  .stage-project-card__badges {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .stage-project-card__badges {
+    flex-wrap: wrap;
+    justify-content: end;
+  }
+
+  .stage-project-card__eyebrow,
+  .stage-project-card__label,
+  .stage-project-card__summary,
+  .stage-project-card__detail p {
+    margin: 0;
+  }
+
+  .stage-project-card__eyebrow,
+  .stage-project-card__label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .stage-project-card__title {
+    margin: 0.25rem 0 0;
+    font-size: 1.4rem;
+  }
+
+  .stage-project-card__summary {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text);
+  }
+
+  .stage-project-card__link {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    color: white;
+    background: var(--accent);
+    box-shadow: 0 16px 34px rgba(15, 118, 110, 0.22);
+  }
+
+  .stage-project-card__details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .stage-project-card__detail {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.74);
+  }
+
+  .stage-project-card__detail p:last-child {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 720px) {
+    .stage-project-card__header {
+      flex-direction: column;
+    }
+
+    .stage-project-card__badges {
+      justify-content: start;
+    }
+
+    .stage-project-card__details {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,106 @@
+---
+import type { CourseModule, CourseStage } from '../../data/course/schema';
+
+interface Props {
+  previousModule?: CourseModule | null;
+  nextModule?: CourseModule | null;
+  previousStage?: CourseStage | null;
+  nextStage?: CourseStage | null;
+}
+
+const {
+  previousModule = null,
+  nextModule = null,
+  previousStage = null,
+  nextStage = null
+} = Astro.props;
+---
+
+{(previousModule || nextModule) && (
+  <nav class="pager-nav" aria-label="模块切换">
+    {previousModule && previousStage && (
+      <a class="pager-nav__link" href={`/modules/${previousModule.slug}/`}>
+        <p class="pager-nav__direction">上一模块</p>
+        <p class="pager-nav__title">
+          <span aria-hidden="true">←</span>
+          {previousModule.number} · {previousModule.title}
+        </p>
+        <p class="pager-nav__summary">Stage {previousStage.number} · {previousStage.title}</p>
+      </a>
+    )}
+
+    {nextModule && nextStage && (
+      <a class="pager-nav__link pager-nav__link--next" href={`/modules/${nextModule.slug}/`}>
+        <p class="pager-nav__direction">下一模块</p>
+        <p class="pager-nav__title">
+          {nextModule.number} · {nextModule.title}
+          <span aria-hidden="true">→</span>
+        </p>
+        <p class="pager-nav__summary">Stage {nextStage.number} · {nextStage.title}</p>
+      </a>
+    )}
+  </nav>
+)}
+
+<style>
+  .pager-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .pager-nav__link {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: calc(var(--radius-md) + 2px);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 18px 40px rgba(16, 34, 39, 0.05);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .pager-nav__link:hover {
+    transform: translateY(-2px);
+    border-color: rgba(15, 118, 110, 0.28);
+    box-shadow: 0 22px 46px rgba(16, 34, 39, 0.08);
+  }
+
+  .pager-nav__link--next {
+    text-align: right;
+  }
+
+  .pager-nav__direction,
+  .pager-nav__title,
+  .pager-nav__summary {
+    margin: 0;
+  }
+
+  .pager-nav__direction {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .pager-nav__title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 1.02rem;
+    font-weight: 700;
+  }
+
+  .pager-nav__link--next .pager-nav__title {
+    justify-content: flex-end;
+  }
+
+  .pager-nav__summary {
+    color: var(--muted);
+    line-height: 1.55;
+  }
+</style>

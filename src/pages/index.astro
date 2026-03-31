@@ -1,0 +1,19 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import { stages } from '../data/course/stages';
+import SiteHero from '../components/course/SiteHero.astro';
+import FeaturePillars from '../components/course/FeaturePillars.astro';
+import StageCard from '../components/course/StageCard.astro';
+import MethodologyStrip from '../components/course/MethodologyStrip.astro';
+import ContinueLearningLink from '../components/course/ContinueLearningLink.astro';
+import StorageNotice from '../components/course/StorageNotice.astro';
+---
+
+<DocsLayout title="RAG 与 Agent 学习网站">
+  <SiteHero />
+  <ContinueLearningLink />
+  <StorageNotice />
+  <FeaturePillars />
+  {stages.map((stage) => <StageCard stage={stage} />)}
+  <MethodologyStrip />
+</DocsLayout>

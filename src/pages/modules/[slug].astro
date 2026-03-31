@@ -1,0 +1,307 @@
+---
+import { getCollection, render } from 'astro:content';
+import CompletionToggle from '../../components/course/CompletionToggle.astro';
+import PagerNav from '../../components/course/PagerNav.astro';
+import ProgressBootstrap from '../../components/course/ProgressBootstrap.astro';
+import StorageNotice from '../../components/course/StorageNotice.astro';
+import StageProjectCard from '../../components/course/StageProjectCard.astro';
+import MissingContentNotice from '../../components/content/MissingContentNotice.astro';
+import Badge from '../../components/ui/Badge.astro';
+import { modules } from '../../data/course/modules';
+import type { CourseModule } from '../../data/course/schema';
+import { stages } from '../../data/course/stages';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import {
+  buildSidebarModel,
+  getAdjacentModuleIds,
+  getCourseModulesInOrder,
+  getRenderableModule
+} from '../../lib/course';
+
+interface Props {
+  module: CourseModule;
+}
+
+export function getStaticPaths() {
+  return modules.map((module) => ({
+    params: { slug: module.slug },
+    props: { module }
+  }));
+}
+
+const { module } = Astro.props;
+const contentEntries = await getCollection('modules');
+const renderableModule = getRenderableModule(modules, module.slug, contentEntries);
+
+if (!renderableModule) {
+  throw new Error(`Unknown module slug: ${module.slug}`);
+}
+
+const stage = stages.find((candidate) => candidate.id === renderableModule.stageId) ?? null;
+
+if (!stage) {
+  throw new Error(`Missing stage metadata for module: ${renderableModule.id}`);
+}
+
+const sidebar = buildSidebarModel(stages, modules, 'module', stage.id, renderableModule.id);
+const orderedModules = getCourseModulesInOrder(stages, modules);
+const { prevId, nextId } = getAdjacentModuleIds(orderedModules, renderableModule.id);
+const previousModule = prevId
+  ? orderedModules.find((candidate) => candidate.id === prevId) ?? null
+  : null;
+const nextModule = nextId ? orderedModules.find((candidate) => candidate.id === nextId) ?? null : null;
+const previousStage = previousModule
+  ? stages.find((candidate) => candidate.id === previousModule.stageId) ?? null
+  : null;
+const nextStage = nextModule
+  ? stages.find((candidate) => candidate.id === nextModule.stageId) ?? null
+  : null;
+const hasContentBody = Boolean(renderableModule.contentEntry?.body?.trim());
+const renderedContent =
+  hasContentBody && renderableModule.contentEntry ? await render(renderableModule.contentEntry) : null;
+const prerequisitesLabel =
+  renderableModule.prerequisites.length > 0
+    ? renderableModule.prerequisites.join(' / ')
+    : '可直接开始';
+---
+
+<DocsLayout title={`${renderableModule.title} | RAG 与 Agent 学习网站`} sidebar={sidebar}>
+  <section class="module-page-hero">
+    <div class="module-page-hero__copy">
+      <p class="module-page-hero__eyebrow">
+        <a href={`/stages/${stage.slug}/`}>Stage {stage.number} · {stage.title}</a>
+      </p>
+      <h1 class="module-page-hero__title">
+        {renderableModule.number} · {renderableModule.title}
+      </h1>
+      <p class="module-page-hero__summary">{renderableModule.summary}</p>
+    </div>
+
+    <div class="module-page-hero__meta">
+      <Badge variant="time">{renderableModule.estimatedTime}</Badge>
+      <Badge variant="number">{renderableModule.keyPoints.length} 个重点</Badge>
+    </div>
+  </section>
+
+  <section class="module-page-completion" aria-labelledby="module-completion">
+    <div class="module-page-section__header">
+      <div>
+        <p class="module-page-section__eyebrow">Completion</p>
+        <h2 class="module-page-section__title" id="module-completion">
+          学习完成状态
+        </h2>
+      </div>
+      <p class="module-page-section__summary">在当前浏览器记录是否学完本模块，方便稍后继续推进。</p>
+    </div>
+
+    <div class="module-page-completion__controls">
+      <CompletionToggle moduleId={renderableModule.id} />
+      <StorageNotice />
+      <ProgressBootstrap />
+    </div>
+  </section>
+
+  <section class="module-page-intro" aria-labelledby="module-intro">
+    <div class="module-page-section__header">
+      <div>
+        <p class="module-page-section__eyebrow">Module Intro</p>
+        <h2 class="module-page-section__title" id="module-intro">
+          开始前先对齐学习目标
+        </h2>
+      </div>
+      <p class="module-page-section__summary">先看前置关系和关键点，再进入正文会更容易建立整体框架。</p>
+    </div>
+
+    <div class="module-page-intro__grid">
+      <div class="module-page-intro__card">
+        <p class="module-page-intro__label">前置模块</p>
+        <p>{prerequisitesLabel}</p>
+      </div>
+      <div class="module-page-intro__card">
+        <p class="module-page-intro__label">阶段目标</p>
+        <p>{stage.goal}</p>
+      </div>
+    </div>
+
+    <ul class="module-page-keypoints">
+      {renderableModule.keyPoints.map((point) => (
+        <li class="module-page-keypoints__item">{point}</li>
+      ))}
+    </ul>
+  </section>
+
+  {
+    renderedContent ? (
+      <article class="module-page-body prose">
+        <renderedContent.Content />
+      </article>
+    ) : (
+      <MissingContentNotice stageHref={`/stages/${stage.slug}/`} modulesHref="/modules/" />
+    )
+  }
+
+  <StageProjectCard
+    stage={stage}
+    moduleCount={stage.moduleIds.length}
+    variant="module"
+    stageHref={`/stages/${stage.slug}/`}
+  />
+
+  <PagerNav
+    previousModule={previousModule}
+    nextModule={nextModule}
+    previousStage={previousStage}
+    nextStage={nextStage}
+  />
+</DocsLayout>
+
+<style>
+  .module-page-hero,
+  .module-page-intro,
+  .module-page-completion {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .module-page-hero {
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid rgba(16, 34, 39, 0.08);
+  }
+
+  .module-page-hero__eyebrow,
+  .module-page-section__eyebrow,
+  .module-page-intro__label {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .module-page-hero__title,
+  .module-page-hero__summary,
+  .module-page-section__title,
+  .module-page-section__summary,
+  .module-page-intro__card p {
+    margin: 0;
+  }
+
+  .module-page-hero__title {
+    margin-top: 0.25rem;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+  }
+
+  .module-page-hero__summary,
+  .module-page-section__summary,
+  .module-page-intro__card p:last-child,
+  .module-page-completion__controls {
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .module-page-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .module-page-section__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .module-page-section__title {
+    margin-top: 0.25rem;
+    font-size: 1.45rem;
+  }
+
+  .module-page-section__summary {
+    max-width: 34ch;
+  }
+
+  .module-page-intro__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .module-page-intro__card,
+  .module-page-completion__controls {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.74);
+  }
+
+  .module-page-completion__controls {
+    display: grid;
+    gap: 0.85rem;
+    color: inherit;
+  }
+
+  .module-page-keypoints {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .module-page-keypoints__item {
+    margin: 0;
+    padding: 0.5rem 0.8rem;
+    border-radius: 999px;
+    color: var(--accent-strong);
+    background: rgba(15, 118, 110, 0.09);
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .module-page-body {
+    margin: 1.75rem 0;
+    padding: 1.3rem;
+    border: 1px solid rgba(15, 118, 110, 0.12);
+    border-radius: calc(var(--radius-lg) + 2px);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 18px 50px rgba(16, 34, 39, 0.05);
+  }
+
+  .module-page-body :global(h2),
+  .module-page-body :global(h3) {
+    color: var(--text);
+  }
+
+  .module-page-body :global(ul),
+  .module-page-body :global(ol) {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .module-page-body :global(li + li) {
+    margin-top: 0.4rem;
+  }
+
+  .module-page-completion {
+    margin: 1.75rem 0;
+  }
+
+  @media (max-width: 720px) {
+    .module-page-section__header {
+      flex-direction: column;
+      align-items: start;
+    }
+
+    .module-page-section__summary {
+      max-width: none;
+    }
+
+    .module-page-intro__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

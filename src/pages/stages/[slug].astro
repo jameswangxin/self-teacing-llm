@@ -1,0 +1,181 @@
+---
+import ModuleListItem from '../../components/course/ModuleListItem.astro';
+import ProgressBootstrap from '../../components/course/ProgressBootstrap.astro';
+import StorageNotice from '../../components/course/StorageNotice.astro';
+import StagePager from '../../components/course/StagePager.astro';
+import StageProjectCard from '../../components/course/StageProjectCard.astro';
+import Badge from '../../components/ui/Badge.astro';
+import { modules } from '../../data/course/modules';
+import type { CourseStage } from '../../data/course/schema';
+import { stages } from '../../data/course/stages';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { buildSidebarModel, getStageModules } from '../../lib/course';
+
+interface Props {
+  stage: CourseStage;
+}
+
+export function getStaticPaths() {
+  return stages.map((stage) => ({
+    params: { slug: stage.slug },
+    props: { stage }
+  }));
+}
+
+const { stage } = Astro.props;
+const stageModules = getStageModules(stages, modules, stage.id);
+const sidebar = buildSidebarModel(stages, modules, 'stage', stage.id);
+const stageIndex = stages.findIndex((candidate) => candidate.id === stage.id);
+const previousStage = stageIndex > 0 ? stages[stageIndex - 1] : null;
+const nextStage = stageIndex >= 0 && stageIndex < stages.length - 1 ? stages[stageIndex + 1] : null;
+---
+
+<DocsLayout title={`${stage.title} | RAG 与 Agent 学习网站`} sidebar={sidebar}>
+  <section class="stage-page-hero">
+    <div class="stage-page-hero__copy">
+      <p class="stage-page-hero__eyebrow">Stage {stage.number}</p>
+      <h1 class="stage-page-hero__title">{stage.title}</h1>
+      <p class="stage-page-hero__summary">{stage.summary}</p>
+    </div>
+
+    <div class="stage-page-hero__meta">
+      <Badge variant="number">{stageModules.length} 个模块</Badge>
+      <Badge variant="status">阶段项目已定义</Badge>
+    </div>
+  </section>
+
+  <section class="stage-page-goal">
+    <p class="stage-page-goal__label">阶段目标</p>
+    <p class="stage-page-goal__text">{stage.goal}</p>
+  </section>
+
+  <section class="stage-page-section" aria-labelledby="stage-modules">
+    <div class="stage-page-section__header">
+      <div>
+        <p class="stage-page-section__eyebrow">Learning Path</p>
+        <h2 class="stage-page-section__title" id="stage-modules">
+          本阶段模块清单
+        </h2>
+      </div>
+      <p class="stage-page-section__summary">按照推荐顺序逐个推进，最后回到阶段项目做整合。</p>
+    </div>
+
+    <StorageNotice />
+    <ProgressBootstrap />
+
+    <ol class="stage-page-section__list">
+      {stageModules.map((module) => (
+        <li>
+          <ModuleListItem module={module} />
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <StageProjectCard stage={stage} moduleCount={stageModules.length} />
+  <StagePager previousStage={previousStage} nextStage={nextStage} />
+</DocsLayout>
+
+<style>
+  .stage-page-hero,
+  .stage-page-goal,
+  .stage-page-section {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .stage-page-hero {
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid rgba(16, 34, 39, 0.08);
+  }
+
+  .stage-page-hero__eyebrow,
+  .stage-page-goal__label,
+  .stage-page-section__eyebrow {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .stage-page-hero__title,
+  .stage-page-hero__summary,
+  .stage-page-goal__text,
+  .stage-page-section__title,
+  .stage-page-section__summary {
+    margin: 0;
+  }
+
+  .stage-page-hero__title {
+    margin-top: 0.25rem;
+    font-size: clamp(2.1rem, 3vw, 3rem);
+  }
+
+  .stage-page-hero__summary,
+  .stage-page-goal__text,
+  .stage-page-section__summary {
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .stage-page-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .stage-page-goal {
+    margin: 1.75rem 0;
+    padding: 1.2rem 1.25rem;
+    border-radius: calc(var(--radius-md) + 2px);
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.92)),
+      rgba(255, 255, 255, 0.84);
+  }
+
+  .stage-page-goal__text {
+    font-size: 1.02rem;
+    color: var(--text);
+  }
+
+  .stage-page-section {
+    margin-bottom: 1.75rem;
+  }
+
+  .stage-page-section__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .stage-page-section__title {
+    margin-top: 0.25rem;
+    font-size: 1.45rem;
+  }
+
+  .stage-page-section__summary {
+    max-width: 34ch;
+  }
+
+  .stage-page-section__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  @media (max-width: 720px) {
+    .stage-page-section__header {
+      flex-direction: column;
+      align-items: start;
+    }
+
+    .stage-page-section__summary {
+      max-width: none;
+    }
+  }
+</style>
